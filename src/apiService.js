@@ -1,11 +1,11 @@
 import axios from "axios";
 
 const API_URL = "https://api.twelvedata.com";
-const API_KEY = "d2925b3abf2d4b0f9874f67b9acd35b2";
+const API_KEY = "";
 
 export const getTimeSeries = async (ticker = "IBM") => {
   try {
-    const requestURL = `${API_URL}/time_series?symbol=${ticker}&apikey=${API_KEY}&interval=1day`;
+    const requestURL = `${API_URL}/time_series?symbol=${ticker}&apikey=${API_KEY}&interval=1day&start_date=2020-01-06&end_date=2024-08-01`;
 
     const response = await axios.get(requestURL);
     return response.data;
