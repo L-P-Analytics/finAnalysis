@@ -14,12 +14,33 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
+// Import axios to make API requests
+import axios from "axios";
+
+
 function App() {
   const [ticker, setTicker] = useState("IBM");
   const [tickerInput, setTickerInput] = useState("IBM");
+  // load articles and aggregate sentiment
+  const [articles, setArticles] = useState([]);
+  const [aggregateSentiment, setAggregateSentiment] = useState({ positive: 0, negative: 0 });
+
 
   useEffect(() => {
     console.log(ticker);
+
+        // Fetch articles and sentiment data from FastAPI
+        const fetchArticles = async () => {
+          try {
+            const response = await axios.get(`http://127.0.0.1:8000/analyze/${ticker}`);
+            setArticles(response.data.articles); // Set articles in state
+            setAggregateSentiment(response.data.aggregate_sentiment); // Set aggregate sentiment in state
+          } catch (error) {
+            console.error("Error fetching data:", error);
+          }
+        };
+    
+        fetchArticles();
   }, [ticker]);
 
   return (
@@ -84,6 +105,7 @@ function App() {
         </Grid>
       </Grid>
 
+      {/*
       <Grid container spacing={2} style={{ marginTop: "20px" }}>
         <Grid item xs={12} md={4}>
           <Card>
@@ -93,6 +115,34 @@ function App() {
             </CardContent>
           </Card>
         </Grid>
+      </Grid>
+    </Container>
+    */}
+
+    {/* Display aggregate sentiment */}
+          <Grid container spacing={2} style={{ marginTop: "20px" }}>
+        <Grid item xs={12}>
+          <Typography variant="h6">Aggregate Sentiment</Typography>
+          <Typography variant="body2">Positive: {aggregateSentiment.positive}</Typography>
+          <Typography variant="body2">Negative: {aggregateSentiment.negative}</Typography>
+        </Grid>
+      </Grid>
+
+      {/* Display the list of articles */}
+      <Grid container spacing={2} style={{ marginTop: "20px" }}>
+        {articles.map((article, index) => (
+          <Grid item xs={12} md={4} key={index}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6">{article.headline}</Typography>
+                <Typography variant="body2">{article.summary}</Typography>
+                <Typography variant="body2" style={{ fontWeight: "bold", marginTop: "10px" }}>
+                  Sentiment: {article.sentiment.label} (Score: {article.sentiment.score})
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
       </Grid>
     </Container>
   );
