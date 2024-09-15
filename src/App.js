@@ -54,6 +54,7 @@ function App() {
                       </InputAdornment>
                     ),
                   }}
+                  defaultValue="IBM"
                 />
               </Grid>
               <Grid item xs={3}>
